@@ -1,0 +1,161 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.brand {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #666;
+  margin-left: 16px;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+.nav-links a:hover {
+  background: #f0f0f0;
+}
+
+.nav-links a.active {
+  background: #e8f0fe;
+  color: #1a56db;
+  font-weight: 500;
+}
+
+/* MAIN */
+.main {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* DATE */
+.date-bar {
+  font-size: 13px;
+  color: #888;
+}
+
+.date-bar span {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ALERT */
+.alert-box {
+  background: #fff8e1;
+  border: 1px solid #f6c90e;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #8a6500;
+}
+
+/* STAT GRID */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-value.green {
+  color: #1e8a4a;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  gap: 8px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.search-bar button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.search-bar button.primary {
+  background: #1a56db;
+  color: #fff;
+  border-color: #1a56db;
+}
+
+/* PANELS */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.empty-msg {
+  font-size: 13px;
+  color: #aaa;
+}

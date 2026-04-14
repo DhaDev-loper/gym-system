@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Management System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="brand">FitTrack Gym</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="members.html">Members</a>
+      <a href="payments.html">Payments</a>
+      <a href="history.html">History</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- Date -->
+    <div class="date-bar">
+      Today — <span id="today-date"></span>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert-box" id="expiry-alert">
+      3 memberships expiring within 7 days
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Check-ins today</div>
+        <div class="stat-value" id="checkins-today">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Revenue today</div>
+        <div class="stat-value green" id="revenue-today">₱ 0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active memberships</div>
+        <div class="stat-value" id="active-members">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total members</div>
+        <div class="stat-value" id="total-members">0</div>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search member by name..." />
+      <button onclick="searchMember()">Search</button>
+      <button class="primary" onclick="window.location.href='members.html'">+ Add member</button>
+    </div>
+
+    <!-- Two Panels -->
+    <div class="panels">
+
+      <!-- Check-ins Panel -->
+      <div class="panel">
+        <div class="panel-title">Today's check-ins</div>
+        <div id="checkins-list">
+          <p class="empty-msg">No check-ins yet today.</p>
+        </div>
+      </div>
+
+      <!-- Payments Panel -->
+      <div class="panel">
+        <div class="panel-title">Today's payments</div>
+        <div id="payments-list">
+          <p class="empty-msg">No payments yet today.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
