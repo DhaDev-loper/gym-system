@@ -161,9 +161,7 @@ body {
 }
 
 
-/* --  for members.html */
-
-
+/* --  for clients.html --  */
 
 /* TABLE */
 .table-wrapper {
@@ -335,4 +333,44 @@ td {
   background: #fff;
   color: #333;
   cursor: pointer;
+}
+
+/* INLINE FORM */
+.inline-form-wrapper {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 17px;
+  overflow: hidden;
+}
+
+.inline-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inline-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inline-form-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.close-btn:hover {
+  background: #f0f0f0;
 }

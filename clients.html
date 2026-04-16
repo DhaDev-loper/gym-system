@@ -20,6 +20,7 @@
 
   <div class="main">
 
+    <!-- TOOLBAR -->
     <div class="search-bar">
       <input type="text" id="search-input" placeholder="Search by name..." oninput="filterClients()" />
       <select id="filter-type" onchange="filterClients()">
@@ -38,6 +39,7 @@
 
     <div style="font-size:13px; color:#888;" id="count-note">Showing 0 clients</div>
 
+    <!-- TABLE -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -56,109 +58,108 @@
       </table>
     </div>
 
-  </div>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal">
-      <h3>New Client Registration</h3>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" id="fname" placeholder="e.g. Juan" />
+    <!-- ── ADD CLIENT FORM (inline, no modal) ── -->
+    <div class="inline-form-wrapper" id="add-client-form" style="display:none;">
+      <div class="inline-form">
+        <div class="inline-form-header">
+          <h3>New Client Registration</h3>
+          <button class="close-btn" onclick="closeForm()">✕</button>
         </div>
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" id="lname" placeholder="e.g. Reyes" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="fname" placeholder="e.g. Juan" />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lname" placeholder="e.g. Reyes" />
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Contact Number</label>
-        <input type="text" id="contact" placeholder="09XX XXX XXXX" />
-      </div>
-
-      <div class="form-row">
         <div class="form-group">
-          <label>Access Plan</label>
-          <select id="mem-type" onchange="updatePreview()">
-            <option value="daily">Daily Pass</option>
-            <option value="monthly">Monthly Subscription</option>
+          <label>Contact Number</label>
+          <input type="text" id="contact" placeholder="09XX XXX XXXX" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Access Plan</label>
+            <select id="mem-type" onchange="updatePreview()">
+              <option value="daily">Daily Pass — ₱140</option>
+              <option value="monthly">Monthly Subscription — ₱1,400</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="date-joined" onchange="updatePreview()" />
+          </div>
+        </div>
+
+        <!-- Lifetime Membership -->
+        <div class="form-group lifetime-box">
+          <div class="lifetime-row">
+            <div>
+              <div style="font-size:13px;font-weight:600;">Lifetime Membership</div>
+              <div style="font-size:12px;color:#888;">One-time fee of ₱1,000 — plan price reduced by ₱200</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="lifetime-check" onchange="updatePreview()" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Discount -->
+        <div class="form-group">
+          <label>Additional Discount</label>
+          <select id="discount" onchange="updatePreview()">
+            <option value="none">None</option>
+            <option value="student">Student (Daily -₱20 / Monthly -₱200)</option>
+            <option value="senior">Senior Citizen (Monthly -₱300)</option>
+            <option value="pwd">PWD (Monthly -₱300)</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Start Date</label>
-          <input type="date" id="date-joined" onchange="updatePreview()" />
-        </div>
-      </div>
 
-      <!-- Lifetime Membership -->
-      <div class="form-group lifetime-box">
-        <div class="lifetime-row">
-          <div>
-            <div style="font-size:13px;font-weight:600;">Lifetime Membership</div>
-            <div style="font-size:12px;color:#888;">One-time fee of ₱1,000 — unlocks discount on all plans</div>
+        <!-- Preview Box -->
+        <div class="preview-box">
+          <div class="preview-row">
+            <span>Access Plan</span>
+            <span id="prev-plan">—</span>
           </div>
-          <label class="toggle">
-            <input type="checkbox" id="lifetime-check" onchange="updatePreview()" />
-            <span class="slider"></span>
-          </label>
+          <div class="preview-row">
+            <span>Base Price</span>
+            <span id="prev-base">—</span>
+          </div>
+          <div class="preview-row" id="prev-lifetime-fee-row" style="display:none;">
+            <span>Lifetime Membership Fee</span>
+            <span>₱1,000</span>
+          </div>
+          <div class="preview-row" id="prev-lifetime-disc-row" style="display:none;">
+            <span>Lifetime Discount</span>
+            <span id="prev-lifetime-disc" style="color:#1e8a4a;">—</span>
+          </div>
+          <div class="preview-row" id="prev-extra-disc-row" style="display:none;">
+            <span>Additional Discount</span>
+            <span id="prev-extra-disc" style="color:#1e8a4a;">—</span>
+          </div>
+          <div class="preview-row total-row">
+            <span>Total to Pay Today</span>
+            <span id="prev-total">—</span>
+          </div>
+          <div class="preview-row" id="prev-expiry-row" style="display:none;">
+            <span>Subscription Expires</span>
+            <span id="prev-expiry" style="color:#c0392b;">—</span>
+          </div>
         </div>
-        <!-- Lifetime fee row — only shows if not yet paid -->
-        <div id="lifetime-fee-row" style="display:none; margin-top:8px; font-size:12px; color:#1a56db;">
-          ₱1,000 lifetime fee will be added to today's payment.
-        </div>
-      </div>
 
-      <!-- Discount -->
-      <div class="form-group">
-        <label>Additional Discount</label>
-        <select id="discount" onchange="updatePreview()">
-          <option value="none">None</option>
-          <option value="student">Student (10%)</option>
-          <option value="senior">Senior Citizen (20%)</option>
-          <option value="pwd">PWD (20%)</option>
-        </select>
-      </div>
-
-      <!-- Preview Box -->
-      <div class="preview-box" id="preview-box">
-        <div class="preview-row">
-          <span>Access Plan</span>
-          <span id="prev-plan">—</span>
+        <div class="modal-actions">
+          <button onclick="closeForm()">Cancel</button>
+          <button class="primary" onclick="addClient()">Save Client</button>
         </div>
-        <div class="preview-row">
-          <span>Base Price</span>
-          <span id="prev-base">—</span>
-        </div>
-        <div class="preview-row" id="prev-lifetime-row" style="display:none;">
-          <span>Lifetime Fee</span>
-          <span id="prev-lifetime-fee">₱1,000</span>
-        </div>
-        <div class="preview-row" id="prev-discount-row" style="display:none;">
-          <span>Lifetime Discount</span>
-          <span id="prev-discount" style="color:#1e8a4a;">—</span>
-        </div>
-        <div class="preview-row" id="prev-extra-discount-row" style="display:none;">
-          <span>Additional Discount</span>
-          <span id="prev-extra-discount" style="color:#1e8a4a;">—</span>
-        </div>
-        <div class="preview-row total-row">
-          <span>Total to Pay</span>
-          <span id="prev-total">—</span>
-        </div>
-        <div class="preview-row" id="prev-expiry-row" style="display:none;">
-          <span>Expiry Date</span>
-          <span id="prev-expiry" style="color:#c0392b;">—</span>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button onclick="closeModal()">Cancel</button>
-        <button class="primary" onclick="addClient()">Save Client</button>
       </div>
     </div>
+
   </div>
 
   <script src="clients.js"></script>

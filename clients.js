@@ -1,16 +1,30 @@
 // ── CONFIG ──────────────────────────────────────────────
-const DAILY_RATE    = 140;
-const MONTHLY_RATE  = 1400;
-const LIFETIME_FEE  = 1000;
-const LIFETIME_DISC = 0.10; // 10% discount on plans for lifetime members
 
-const DISCOUNT_RATES = {
-  none:    0,
-  student: 0.1432857, // ~14.3% to make it exactly ₱120 for daily and ₱1200 for monthly
-  senior:  0.20,
-  pwd:     0.20,
+const RATES = {
+  daily:   140,
+  monthly: 1400,
 };
 
+const LIFETIME_FEE       = 1000;
+const LIFETIME_PLAN_DISC = {
+  daily:   20,
+  monthly: 200,
+};
+
+const DISCOUNTS = {
+  daily: {
+    none:    0,
+    student: 20,
+    senior:  0,
+    pwd:     0,
+  },
+  monthly: {
+    none:    0,
+    student: 200,
+    senior:  300,
+    pwd:     300,
+  },
+};
 // ── STORAGE ─────────────────────────────────────────────
 let clients = JSON.parse(localStorage.getItem('gym-clients')) || [];
 
@@ -37,19 +51,22 @@ function getStatus(type, expiry) {
   return 'active';
 }
 
-function calcTotal(type, isLifetime, discountKey, includeLifetimeFee) {
-  const base     = type === 'daily' ? DAILY_RATE : MONTHLY_RATE;
-  const lifDisc  = isLifetime ? base * LIFETIME_DISC : 0;
-  const addDisc  = base * (DISCOUNT_RATES[discountKey] || 0);
-  const planCost = base - lifDisc - addDisc;
-  const total    = planCost + (includeLifetimeFee ? LIFETIME_FEE : 0);
-  return { base, lifDisc, addDisc, planCost, total };
+function calcTotal(type, isLifetime, discountKey) {
+  const base         = RATES[type];
+  const lifetimeDisc = isLifetime ? LIFETIME_PLAN_DISC[type] : 0;
+  const extraDisc    = DISCOUNTS[type][discountKey] || 0;
+  const planCost     = base - lifetimeDisc - extraDisc;
+  const lifetimeFee  = isLifetime ? LIFETIME_FEE : 0;
+  const total        = planCost + lifetimeFee;
+
+  return { base, lifetimeDisc, extraDisc, planCost, lifetimeFee, total };
 }
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(dateStr).toLocaleDateString('en-PH', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
 }
 
 // ── BADGES ──────────────────────────────────────────────
@@ -75,7 +92,7 @@ function renderTable(list) {
     `Showing ${list.length} client${list.length !== 1 ? 's' : ''}`;
 
   if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#aaa;padding:20px;">No clients found.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#aaa;padding:20px;">No clients found.</td></tr>`;
     return;
   }
 
@@ -93,7 +110,7 @@ function renderTable(list) {
         <td style="text-align:center;">
           ${c.isLifetime ? '<span class="badge badge-lifetime">✓ Lifetime</span>' : '—'}
         </td>
-        <td style="font-weight:600; color:#1e8a4a;">₱${c.amountPaid.toLocaleString()}</td>
+        <td style="font-weight:600;color:#1e8a4a;">₱${c.amountPaid.toLocaleString()}</td>
         <td>${statusBadge(status)}</td>
         <td>${formatDate(c.joined)}</td>
         <td>${formatDate(c.expiry)}</td>
@@ -123,25 +140,27 @@ function filterClients() {
   renderTable(filtered);
 }
 
-// ── MODAL ────────────────────────────────────────────────
+// ── FORM OPEN / CLOSE ────────────────────────────────────
 function openModal() {
-  document.getElementById('modal-overlay').style.display = 'flex';
+  const form = document.getElementById('add-client-form');
+  form.style.display = 'block';
   document.getElementById('date-joined').valueAsDate = new Date();
   updatePreview();
+  form.scrollIntoView({ behavior: 'smooth' });
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').style.display = 'none';
+function closeForm() {
+  document.getElementById('add-client-form').style.display = 'none';
   clearForm();
 }
 
 function clearForm() {
-  document.getElementById('fname').value          = '';
-  document.getElementById('lname').value          = '';
-  document.getElementById('contact').value        = '';
-  document.getElementById('mem-type').value       = 'daily';
-  document.getElementById('discount').value       = 'none';
-  document.getElementById('lifetime-check').checked = false;
+  document.getElementById('fname').value             = '';
+  document.getElementById('lname').value             = '';
+  document.getElementById('contact').value           = '';
+  document.getElementById('mem-type').value          = 'daily';
+  document.getElementById('discount').value          = 'none';
+  document.getElementById('lifetime-check').checked  = false;
 }
 
 // ── PREVIEW ──────────────────────────────────────────────
@@ -151,36 +170,33 @@ function updatePreview() {
   const discountKey = document.getElementById('discount').value;
   const startDate   = document.getElementById('date-joined').value;
 
-  // Check if this client already has lifetime (new reg = always false)
-  const includeLifetimeFee = isLifetime;
+  const { base, lifetimeDisc, extraDisc, lifetimeFee, total } =
+    calcTotal(type, isLifetime, discountKey);
 
-  const { base, lifDisc, addDisc, total } = calcTotal(type, isLifetime, discountKey, includeLifetimeFee);
-
-  // Plan label
   document.getElementById('prev-plan').textContent =
     type === 'daily' ? 'Daily Pass' : 'Monthly Subscription';
 
-  // Base
-  document.getElementById('prev-base').textContent = `₱${base}`;
+  document.getElementById('prev-base').textContent = `₱${base.toLocaleString()}`;
 
   // Lifetime fee row
-  const lifFeeRow = document.getElementById('prev-lifetime-row');
-  lifFeeRow.style.display = isLifetime ? 'flex' : 'none';
+  document.getElementById('prev-lifetime-fee-row').style.display =
+    isLifetime ? 'flex' : 'none';
 
   // Lifetime discount row
-  const lifDiscRow = document.getElementById('prev-discount-row');
-  if (isLifetime && lifDisc > 0) {
+  const lifDiscRow = document.getElementById('prev-lifetime-disc-row');
+  if (isLifetime && lifetimeDisc > 0) {
     lifDiscRow.style.display = 'flex';
-    document.getElementById('prev-discount').textContent = `-₱${lifDisc}`;
+    document.getElementById('prev-lifetime-disc').textContent = `-₱${lifetimeDisc}`;
   } else {
     lifDiscRow.style.display = 'none';
   }
 
-  // Additional discount row
-  const extraRow = document.getElementById('prev-extra-discount-row');
-  if (discountKey !== 'none' && addDisc > 0) {
+  // Extra discount row — use per-plan discount amount
+  const extraRow    = document.getElementById('prev-extra-disc-row');
+  const extraAmount = DISCOUNTS[type][discountKey] || 0;
+  if (discountKey !== 'none' && extraAmount > 0) {
     extraRow.style.display = 'flex';
-    document.getElementById('prev-extra-discount').textContent = `-₱${addDisc}`;
+    document.getElementById('prev-extra-disc').textContent = `-₱${extraAmount}`;
   } else {
     extraRow.style.display = 'none';
   }
@@ -188,19 +204,39 @@ function updatePreview() {
   // Total
   document.getElementById('prev-total').textContent = `₱${total.toLocaleString()}`;
 
-  // Expiry preview
+  // Expiry preview (monthly only)
   const expiryRow = document.getElementById('prev-expiry-row');
   if (type === 'monthly' && startDate) {
-    const expiry = getExpiryDate('monthly', startDate);
     expiryRow.style.display = 'flex';
-    document.getElementById('prev-expiry').textContent = formatDate(expiry);
+    document.getElementById('prev-expiry').textContent =
+      formatDate(getExpiryDate('monthly', startDate));
+  } else {
+    expiryRow.style.display = 'none';
+  }
+}
+
+  // Extra discount row
+  const extraRow = document.getElementById('prev-extra-disc-row');
+  if (discountKey !== 'none' && extraDisc > 0) {
+    extraRow.style.display = 'flex';
+    document.getElementById('prev-extra-disc').textContent = `-₱${extraDisc}`;
+  } else {
+    extraRow.style.display = 'none';
+  }
+
+  // Total
+  document.getElementById('prev-total').textContent = `₱${total.toLocaleString()}`;
+
+  // Expiry preview (monthly only)
+  const expiryRow = document.getElementById('prev-expiry-row');
+  if (type === 'monthly' && startDate) {
+    expiryRow.style.display = 'flex';
+    document.getElementById('prev-expiry').textContent =
+      formatDate(getExpiryDate('monthly', startDate));
   } else {
     expiryRow.style.display = 'none';
   }
 
-  // Lifetime fee note
-  document.getElementById('lifetime-fee-row').style.display = isLifetime ? 'block' : 'none';
-}
 
 // ── ADD CLIENT ───────────────────────────────────────────
 function addClient() {
@@ -217,11 +253,11 @@ function addClient() {
     return;
   }
 
-  const expiry = getExpiryDate(type, joined);
-  const { total } = calcTotal(type, isLifetime, discountKey, isLifetime);
+  const expiry       = getExpiryDate(type, joined);
+  const { total }    = calcTotal(type, isLifetime, discountKey);
 
-  const newClient = {
-    id:          Date.now(),
+  clients.push({
+    id:         Date.now(),
     fname,
     lname,
     contact,
@@ -229,13 +265,12 @@ function addClient() {
     joined,
     expiry,
     isLifetime,
-    discount:    discountKey,
-    amountPaid:  total,
-  };
+    discount:   discountKey,
+    amountPaid: total,
+  });
 
-  clients.push(newClient);
   saveClients();
-  closeModal();
+  closeForm();
   renderTable(clients);
 }
 
