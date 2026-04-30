@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  margin: 0;
+  margin: 5px;
   padding: 0;
 }
 
@@ -21,16 +21,16 @@ body {
 }
 
 .brand {
-  font-size: 16px;
+  font-size: 25px;
   font-weight: bold;
 }
 
 .nav-links a {
   text-decoration: none;
   color: #666;
-  margin-left: 16px;
-  font-size: 14px;
-  padding: 6px 14px;
+  margin-left: 20px;
+  font-size: 16px;
+  padding: 10px 14px;
   border-radius: 8px;
 }
 
@@ -40,23 +40,23 @@ body {
 
 .nav-links a.active {
   background: #e8f0fe;
-  color: #1a56db;
+  color: #000000;
   font-weight: 500;
 }
 
 /* MAIN */
 .main {
-  padding: 24px;
+  padding: 30px 40px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 1100px;
+  gap: 20px;
+  max-width: 1150px;
   margin: 0 auto;
 }
 
 /* DATE */
 .date-bar {
-  font-size: 13px;
+  font-size: 20px;
   color: #888;
 }
 
@@ -78,19 +78,20 @@ body {
 /* STAT GRID */
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 2fr);
+  gap: 30px;
 }
 
 .stat-card {
   background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 16px;
+  border: 1px solid #816d6d;
+  border-radius: 20px;
+  padding:  30px 20px 30px;
+  margin-bottom: 15px;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 18px;
   color: #888;
   margin-bottom: 8px;
 }
@@ -108,13 +109,13 @@ body {
 /* SEARCH BAR */
 .search-bar {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .search-bar input {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
+  padding: 10px 30px;
+  border: 1px solid #ef9e9e;
   border-radius: 8px;
   font-size: 13px;
 }
@@ -139,6 +140,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  margin-top: 0;
 }
 
 .panel {
